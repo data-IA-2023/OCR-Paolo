@@ -1,0 +1,10 @@
+fastapi
+requests
+jinja2
+azure-cognitiveservices-vision-computervision
+msrest
+python-dotenv
+pillow
+pyzbar
+python-multipart
+pyodbc

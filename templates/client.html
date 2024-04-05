@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reporting Client</title>
+    <style>
+        /* Add your CSS styling here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        h1 {
+            color: #333;
+        }
+        input[type="text"] {
+            width: 20%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        li strong {
+            color: #007bff;
+        }
+        .product-list {
+            margin-left: 20px;
+        }
+        .product-item:before {
+            content: "\2022"; /* Unicode for bullet point */
+            color: #007bff;
+            margin-right: 5px;
+        }
+        .back-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-button" onclick="window.location.href='/'">Home</button>
+        <h1>Reporting Client</h1>
+        <form action="/invoice/" method="post">
+            <label for="invoice_number">Introduisez votre número de facture complet:</label><br>
+            <input type="text" id="invoice_number" name="invoice_number" required><br>
+            <button type="submit">Submit</button>
+        </form>
+        <br>
+        <h2>Détails de facture:</h2>
+        <ul>
+            {% if invoice_data %}
+                {% for key, value in invoice_data.items() %}
+                    {% if key == 'Commande' %}
+                        <li><strong>{{ key }}:</strong></li>
+                        <ul class="product-list">
+                            {% for product in value %}
+                                <li class="product-item">
+                                    {{ product.Produit }}, 
+                                    <strong>Quantité:</strong> {{ product.Quantité }},
+                                    <strong>Prix:</strong> {{ product.Prix }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <li><strong>{{ key }}:</strong> {{ value }}</li>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <li>Pas de facture trouvé</li>
+            {% endif %}
+        </ul>
+    </div>
+</body>
+</html>
+
