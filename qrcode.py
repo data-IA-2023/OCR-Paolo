@@ -21,7 +21,7 @@ def decodeQR(url):
 
         # Convert the matches into a dictionary
         result = {'Id_Client': matches[0][1], 'Client_Category': matches[1][1]}
-        return result
-    except:
-        return None
+        return {'Result':result, 'Monitor':info}
+    except Exception as error:
+        return {'Result':'None', 'Monitor':'None'}
 

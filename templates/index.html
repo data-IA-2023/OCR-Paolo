@@ -17,6 +17,25 @@
             text-align: center;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        #refreshButton {
+            position: absolute; /* or absolute */
+            top: 15px;
+            right: 50px;
+            background-color: #007bff; /* Bootstrap primary blue */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        /* Additional styles for the message display */
+        #message {
+            position: absolute;
+            top: calc(20px + 40px); /* 20px for button top + 20px spacing */
+            right: 20px;
+            font-size: 12px; /* Smaller font size for message */
+        }
         h1 {
             color: #333;
         }
@@ -32,10 +51,28 @@
         button:hover {
             background-color: #0056b3;
         }
-        /* Add more styling as needed */
+
     </style>
 </head>
 <body>
+    <button id="refreshButton">Actualiser</button>
+    <div id="message"></div>
+    
+    <script>
+        document.getElementById('refreshButton').addEventListener('click', function() {
+            fetch('/refresh', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('message').textContent = data.error;
+                } else {
+                    document.getElementById('message').textContent = data.message || 'Une erreur est survenue';
+                }
+            });
+        });
+    </script>
+    
+           
     <div class="container">
         <h1>Facture App</h1>
         <p>Clickez sur la functionalité que vous désirez:</p>

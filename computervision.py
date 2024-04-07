@@ -7,7 +7,7 @@ import os
 import re
 from qrcode import decodeQR
 import requests
-from monitoring import monitoring
+from database import monitoring
 
 load_dotenv()
 
@@ -23,18 +23,18 @@ def extractTextFromImage(read_image_url):
             read_result = computervision_client.get_read_result(operation_id)
             if read_result.status not in ['notStarted', 'running']:
                 break
-            time.sleep(1)      
+            time.sleep(1)
         if read_result.status == OperationStatusCodes.succeeded:
             for text_result in read_result.analyze_result.read_results:
                 for line in text_result.lines:
                     result = result + " " + line.text
             return {'Result':result,'Status':read_result.status}
     except ComputerVisionOcrErrorException as error:
-            return {'Result':None,'Status':error} 
+            return {'Result':'None','Status':error}
 
 def regextodict(text):
     
-    product_pattern = r'\b[A-Z](?![A-Z])[\w\s]+\. \d+\s?x?\s?\d+\.\d+ Euro\b'
+    product_pattern = r'\b[A-ZÀÉÈÊËÎÏÔŒÙÛÜÇ][^\dA-ZÀÉÈÊËÎÏÔŒÙÛÜÇ]+\. \d+\s?x?\s?\d+\.\s?\d+ [Ee]uro\b'
     products = re.findall(product_pattern, text)
     extra_pattern = r'^(.*)\. (\d+) x (\d+\.\d+) Euro$'
 
@@ -51,7 +51,7 @@ def regextodict(text):
 
     # Remove products from the text to get the address
     stripped_text = re.sub(product_pattern, '', text).strip()
-	
+    print(stripped_text)
     pattern = r'\b(?=Issue date|Bill to|Address|TOTAL\b)'
     parts = re.split(pattern, stripped_text, flags=re.IGNORECASE)
     invoice_data = {}
@@ -61,12 +61,15 @@ def regextodict(text):
         invoice_data['ID Facture'] = parts[0].replace("INVOICE","").strip()
         invoice_data["Date d'émision"] = parts[1].replace("Issue date","").replace("issue date","").strip()
         # For 'Client', we assume 'Bill to' may include additional descriptors we want to exclude
-        invoice_data['Client'] = parts[2].replace("Bill to","").replace("Brilllling", "").replace("Biilllling","").strip()
+        invoice_data['Client'] = parts[2].replace("Bill to","").replace("Brilllling", "").replace("Biilllling","").replace("Billlling", "").strip()
         invoice_data['Adresse'] = parts[3].replace("Address", "").strip()
         invoice_data['Commande'] = products_info
         # Assuming the total always follows 'TOTAL'
-        invoice_data['Totale'] = re.search(r'\d+\.\d+(?=\s+Euro)', parts[-1]).group()
+        invoice_data['Total'] = re.search(r'\d+\.\d+(?=\s+Euro)', parts[-1]).group()
     return invoice_data
+
+
+
 
 def infofacture(facture):
     base_url = "https://invoiceocrp3.azurewebsites.net/invoices"
@@ -74,15 +77,17 @@ def infofacture(facture):
     Code_API_factures = requests.get(url, headers={'accept': 'application/json'}).status_code
     ocr = extractTextFromImage(url)
     text = ocr['Result']
-    status_ocr = ocr['Status']
-    qr_info = decodeQR(url)
+    status_ocr = str(ocr['Status'])
+    qr = decodeQR(url)
+    qr_info = qr['Result']
+    qr_monitor = qr['Monitor']
     #-----Car on utilise tous les services dans cette function, on appele notre monitoring maintenant------
-    monitoring(Code_API_factures, ocr, status_ocr, qr_info)
+    monitoring(Code_API_factures, text, status_ocr, qr_monitor)
     #la "magie" de tourner notre ligne de l'ocr a un dictionaire utilisable
     invoice_data = regextodict(text)
     #et avec .update on peut agreger un dictionaire a un autre pour combiner le code qr
     invoice_data.update(qr_info)
-    return invoice_data
+    return {'codeapi':Code_API_factures, 'invoice':invoice_data}
 
 
 
