@@ -65,12 +65,19 @@
             .then(data => {
                 if (data.error) {
                     document.getElementById('message').textContent = data.error;
+                } else if (data.message) {
+                    document.getElementById('message').textContent = data.message;
                 } else {
-                    document.getElementById('message').textContent = data.message || 'Une erreur est survenue';
+                    document.getElementById('message').textContent = 'Une erreur est survenue';
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('message').textContent = 'Une erreur est survenue';
             });
         });
     </script>
+    
     
            
     <div class="container">

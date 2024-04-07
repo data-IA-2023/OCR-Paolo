@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monitoring</title>
+    <style>
+        /* Add your CSS styling here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .header {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 7px 20px;
+            background-color: #fff;
+            position: sticky;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            top: 0;
+            z-index: 1000;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow-x: auto;
+        }
+        h1 {
+            color: #333;
+        }
+        input[type="text"], select {
+            width: 20%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        li strong {
+            color: #007bff;
+        }
+        .product-list {
+            margin-left: 20px;
+        }
+        .product-item:before {
+            content: "\2022"; /* Unicode for bullet point */
+            color: #007bff;
+            margin-right: 5px;
+        }
+        .back-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            border-collapse: collapse;
+            min-width: 1200px;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Add shadow to table */
+            transition: 0.3s; /* Smooth transition for hover effects */
+        }
+        table:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); /* Darker shadow on hover for a "lifted" effect */
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd; /* Add a bottom border to table cells */
+        }
+        th {
+            background-color: #007bff; /* A nice shade of blue for the header */
+            color: white;
+        }
+        tr:hover {background-color: #f5f5f5;} /* Hover effect for rows */
+        tr:nth-child(even) {background-color: #f2f2f2;} /* Zebra-striping for rows */
+        td {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-button" onclick="window.location.href='/'">Home</button>
+        <h1>Monitoring</h1> </div>
+        <div class="container">
+        <table>
+            <tr>
+                <th>Timestamp</th>
+                <th>Code API Factures</th>
+                <th>Resultat Computer Vision</th>
+                <th>Status Computer Vision</th>
+                <th>Resultat QR Code</th>
+            </tr>
+            {% for monit in monitoring %}
+            <tr>
+                <td>{{ monit['Timestamp'] }}</td>   
+                <td>{{ monit['Code_API_factures'] }}</td>
+                <td>{{ monit['ComVis_result'] }}</td>
+                <td>{{ monit['ComVis_status'] }}</td>
+                <td>{{ monit['QR_result'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

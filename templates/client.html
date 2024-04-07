@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Reporting Client</title>
+    <title>Reporting</title>
     <style>
         /* Add your CSS styling here */
         body {
@@ -20,7 +20,7 @@
         h1 {
             color: #333;
         }
-        input[type="text"] {
+        input[type="text"], select {
             width: 20%;
             padding: 10px;
             margin-bottom: 10px;
@@ -75,37 +75,44 @@
 <body>
     <div class="container">
         <button class="back-button" onclick="window.location.href='/'">Home</button>
-        <h1>Reporting Client</h1>
-        <form action="/invoice/" method="post">
-            <label for="invoice_number">Introduisez votre número de facture complet:</label><br>
-            <input type="text" id="invoice_number" name="invoice_number" required><br>
+        <h1>Reporting du client</h1>
+        <form action="/reporting" method="post">
+            <label for="client_id">Client ID:</label><br>
+            <input type="text" id="client_id" name="client_id" required><br>
+            <label for="select_type">Select Type:</label><br>
+            <select id="select_type" name="select_type" required>
+                <option value="factures">Factures</option>
+                <option value="produits">Produits</option>
+            </select><br>
             <button type="submit">Submit</button>
         </form>
-        <br>
-        <h2>Détails de facture:</h2>
-        <ul>
-            {% if invoice_data %}
-                {% for key, value in invoice_data.items() %}
-                    {% if key == 'Commande' %}
-                        <li><strong>{{ key }}:</strong></li>
-                        <ul class="product-list">
-                            {% for product in value %}
-                                <li class="product-item">
-                                    {{ product.Produit }}, 
-                                    <strong>Quantité:</strong> {{ product.Quantité }},
-                                    <strong>Prix:</strong> {{ product.Prix }}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <li><strong>{{ key }}:</strong> {{ value }}</li>
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-                <li>Pas de facture trouvé</li>
-            {% endif %}
-        </ul>
+
+        {% if data %}
+    
+    <h2>Détails:</h2>
+    
+    {% for sub_key, sub_value in client.items() %}
+    <h3>{{ sub_key }}: {{ sub_value }} </h3>
+    {% endfor %}
+    <ul>
+        {% for key, value in data.items() %}
+            <li><strong>{{ key }}:</strong>
+                {% if value is mapping %}
+                    <ul>
+                        {% for sub_key, sub_value in value.items() %}
+                            <li><b>{{ sub_key }}:</b> {{ sub_value }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    {{ value }}
+                {% endif %}
+            </li>    
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No data found</p>
+{% endif %}
+
     </div>
 </body>
 </html>
-
